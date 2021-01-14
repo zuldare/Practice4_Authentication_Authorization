@@ -2,15 +2,9 @@ package es.codeurjc.books.models;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Data;
 import lombok.ToString;
@@ -33,5 +27,12 @@ public class User {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
 	private Collection<Comment> comments = Collections.emptyList();
+
+	@Column
+	private String password;
+
+//	@ElementCollection(fetch = FetchType.EAGER)
+//	private List<String> roles;
+
 
 }
