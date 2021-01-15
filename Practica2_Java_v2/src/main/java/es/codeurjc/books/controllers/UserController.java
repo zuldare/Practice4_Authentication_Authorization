@@ -45,7 +45,6 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Found all users",
                     content = {@Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = UserResponseDto.class)))})})
-    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/")
     public Collection<UserResponseDto> getUsers() {
         return this.userService.findAll();

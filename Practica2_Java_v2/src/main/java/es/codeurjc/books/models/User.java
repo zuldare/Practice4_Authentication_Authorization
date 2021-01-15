@@ -2,12 +2,12 @@ package es.codeurjc.books.models;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import javax.persistence.*;
 
 import lombok.Data;
 import lombok.ToString;
+
 
 @Entity
 @Table(name = "users")
@@ -30,9 +30,5 @@ public class User {
 
 	@Column
 	private String password;
-
-//	@ElementCollection(fetch = FetchType.EAGER)
-//	private List<String> roles;
-
 
 }
