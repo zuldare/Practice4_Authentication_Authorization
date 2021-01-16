@@ -17,7 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static es.codeurjc.books.config.Constants.LOGIN_URL;
+import static es.codeurjc.books.config.Constants.*;
 
 @Configuration
 @EnableWebSecurity
@@ -45,12 +45,18 @@ public class WebSecurityA extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 // Login does not need authentication
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
+
+                // ALLOW CERTAIN OPERATIONS TO NON-AUTHORIZED USERS
+                .antMatchers(HttpMethod.POST, LOGIN_URL, SIGNUP_URL).permitAll()
+                .antMatchers(HttpMethod.GET, LOGIN_URL, BOOKS_URL).permitAll()
+
+                // ALLOW ACCES TO DOCUMENTATION OF THE API
+                .antMatchers(API_DOCS_URL, API_DOCS_YAML, SWAGGER_UI_HTML, SWAGGER_UI_URL).permitAll()
+
                 // Any other request must be authenticated using JWT
                 .anyRequest().authenticated().and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
-               ;
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()));
     }
 
     @Override
