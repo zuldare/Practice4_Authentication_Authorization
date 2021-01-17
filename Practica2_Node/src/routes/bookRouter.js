@@ -1,4 +1,8 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
+
+
 const router = express.Router();
 const { Book, toResponse: toResponseBook } = require('../models/book.js');
 const User = require('../models/user.js').User;
@@ -13,7 +17,7 @@ router.get('/', async (req, res) => {
     res.json(toResponseBook(allBooks));
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', verifyToken, async (req, res) => {
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -30,7 +34,7 @@ router.get('/:id', async (req, res) => {
     res.json(toResponseBook(book));
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
 
     const book = new Book({
         title: req.body.title,
@@ -50,7 +54,7 @@ router.post('/', async (req, res) => {
 });
 
 
-router.post('/:id/comments', async (req, res) => {
+router.post('/:id/comments', verifyToken,async (req, res) => {
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -116,5 +120,18 @@ router.delete('/:id/comments/:commentId', async (req, res) => {
     res.json(toResponseComment(comment));
 
 });
+
+
+function verifyToken(req, res, next) {
+    const token = req.headers['authorization'];
+    if (!token)
+        return res.status(403).send({ auth: false, message: 'No token provided.' });
+    jwt.verify(token, config.secret, async function(err, decoded) {
+        if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        const foundUser = await User.findById(decoded.id);
+        if(!foundUser) return res.sendStatus(403);
+        next();
+    });
+}
 
 module.exports = router;
